@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Jaysp656\AndroidStudioProjects\BasicTango_button\app\libs\tango_java_lib.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="cee1f04897214dbfe7850cd64a59452c42ed3c08">
+        <dex dex="C:\Users\Jaysp656\AndroidStudioProjects\BasicTango_button\app\build\intermediates\pre-dexed\debug\tango_java_lib-5d97a4e0dacf90b8326afd01ec23e93996d73284.jar" />
+    </item>
+    <item
+        jar="D:\Documents\Android\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
+        <dex dex="C:\Users\Jaysp656\AndroidStudioProjects\QuickstartJava\app\build\intermediates\pre-dexed\debug\support-v4-19.1.0-0394818b00026eea0e189c26fb725642053a1d68.jar" />
+    </item>
+    <item
+        jar="C:\Users\Jaysp656\AndroidStudioProjects\QuickstartJava\app\libs\tango_java_lib.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="cee1f04897214dbfe7850cd64a59452c42ed3c08">
+        <dex dex="C:\Users\Jaysp656\AndroidStudioProjects\QuickstartJava\app\build\intermediates\pre-dexed\debug\tango_java_lib-b57b213d8e3c6b09077713daa2d0288a3fcb17ae.jar" />
+    </item>
+
+</items>
