@@ -53,7 +53,8 @@
         android:visibility="visible"
         android:singleLine="false"
         android:onClick="togglestate"
-        android:background="#7c333333" />
+        android:background="#7c333333"
+                />
 
 </LinearLayout>
 <!-- From: file:/C:/Users/Jaysp656/AndroidStudioProjects/BasicTango_button/app/src/main/res/layout/activity_main.xml -->

@@ -19,6 +19,8 @@ package com.projecttango.experiments.basictango_button;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -81,49 +83,62 @@ public class MainActivity extends Activity {
 
 
 
-    //Notification basic setup
-    NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.ic_launcher)
-                    .setContentTitle("UTC Tango")
-                    .setContentText("Collecting Data!")
-                    .setOngoing(true)
-                    .setPriority(2);
-
-
-
 
     public void togglestate(View view){
-        isOn = ((ToggleButton)view).isChecked();
 
-
+    isOn = ((ToggleButton) view).isChecked();
 
         // Gets an instance of the NotificationManager service
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        //Intent for Stop button on Notification
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("isOn","false");
+        PendingIntent aIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        //Intent for Restart button on Notification
+        Intent intent2 = new Intent(this, MainActivity.class);
+        intent.putExtra("isOn","true");
+        PendingIntent bIntent = PendingIntent.getActivity(this, 0, intent2, 0);
+
+        //NOTIFICATION SETUP
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.appicon)
+                        .setContentTitle("UTC Tango")
+                        .setContentText("Collecting Data!")
+                        .setOngoing(true)
+                        .setPriority(2)
+                        .setAutoCancel(true)
+                        .setDeleteIntent(aIntent)
+                        .addAction(R.drawable.none, "Stop Session", aIntent)
+                        .addAction(R.drawable.none, "Restart", bIntent);
+        int mNotificationId = 8001; //Notification ID
+
+
         if(isOn) {
 
             //create UUID for session;
             uuid = UUID.randomUUID();
 
+            //Starting Toast
             Toast.makeText(getApplicationContext(),
-                    "UUID: " + uuid, Toast.LENGTH_SHORT)
+                    "Collecting Data...", Toast.LENGTH_SHORT)
                     .show();
-            //Notification Initialization
-            // Sets an ID for the notification
-            int mNotificationId = 8001;
 
             // Builds the notification and issues it.
             mNotifyMgr.notify(mNotificationId, mBuilder.build());
-
-
         }
         else{ //action if button is false
             isOn = false;
             mNotifyMgr.cancelAll(); //kill notification
+
+            //Stopping Toast
+            Toast.makeText(getApplicationContext(),
+                    "Stopped collecting data", Toast.LENGTH_SHORT)
+                    .show();
         }
     }
-
 
 
 
@@ -133,6 +148,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         mTranslationTextView = (TextView) findViewById(R.id.translation_text_view);
         mRotationTextView = (TextView) findViewById(R.id.rotation_text_view);
@@ -147,8 +163,10 @@ public class MainActivity extends Activity {
         // like: mConfig.putBoolean(TangoConfig.KEY_BOOLEAN_DEPTH, true)
         mConfig = mTango.getConfig(TangoConfig.CONFIG_TYPE_CURRENT);
         mConfig.putBoolean(TangoConfig.KEY_BOOLEAN_MOTIONTRACKING, true);
-
     }
+
+
+
 
 
 
@@ -164,11 +182,20 @@ public class MainActivity extends Activity {
                     Tango.getRequestPermissionIntent(Tango.PERMISSIONTYPE_MOTION_TRACKING),
                     Tango.TANGO_INTENT_ACTIVITYCODE);
         }
+
+        // Clear all notification
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotifyMgr.cancelAll();
     }
+
+
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
+
         if (requestCode == Tango.TANGO_INTENT_ACTIVITYCODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_CANCELED) {
@@ -199,6 +226,10 @@ public class MainActivity extends Activity {
         }
     }
 
+
+
+
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -221,10 +252,19 @@ public class MainActivity extends Activity {
         }
     }
 
+
+
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
     }
+
+
+
+
+
 
     private void setTangoListeners() {
         // Select coordinate frame pairs
@@ -253,14 +293,16 @@ public class MainActivity extends Activity {
                         pose.rotation[0], pose.rotation[1], pose.rotation[2],
                         pose.rotation[3]);
 
-                // Output to LogCat
-                String logMsg = translationMsg + " | " + rotationMsg + " | " + pose.timestamp;
+                // Output to LogCat for testing purposes
+               // String logMsg = translationMsg + " | " + rotationMsg + " | " + pose.timestamp;
                // Log.i(TAG, logMsg);
 
+                //If button returns true
                 if(isOn) {
                     try {
-
                         timestamp = pose.timestamp; //get timestamp data
+
+                        //Initializes HTTP POST request
                         HttpClient httpclient = new DefaultHttpClient();
                         HttpPost httpPost = new HttpPost("http://10.101.102.123/datapoint");
                         List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
@@ -272,10 +314,11 @@ public class MainActivity extends Activity {
                         httpPost.setEntity(new UrlEncodedFormEntity(nameValuePair));
 
                         try {
+                            //Send Request
                             HttpResponse response = httpclient.execute(httpPost);
                             // write response to log
                             Log.d("Http Post Response:", response.toString());
-                        } catch (ClientProtocolException e) {
+                        } catch (ClientProtocolException e) { // Catch a few different Exceptions
                             // Log exception
                             e.printStackTrace();
                         } catch (IOException e) {
@@ -302,6 +345,7 @@ public class MainActivity extends Activity {
                     public void run() {
                         Log.i(TAG, "ISON = " + isOn);
 
+                            //If Button returns True
                             if(isOn) {
                                 mTranslationTextView.setText("Translation: " + translationMsg);
                                 mRotationTextView.setText("Rotation: " + rotationMsg);

@@ -53,6 +53,7 @@
         android:visibility="visible"
         android:singleLine="false"
         android:onClick="togglestate"
-        android:background="#7c333333" />
+        android:background="#7c333333"
+                />
 
 </LinearLayout>
