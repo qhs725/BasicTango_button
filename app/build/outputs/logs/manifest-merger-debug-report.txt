@@ -55,3 +55,9 @@ category#android.intent.category.LAUNCHER
 ADDED from AndroidManifest.xml:39:17
 	android:name
 		ADDED from AndroidManifest.xml:39:27
+activity#com.projecttango.experiments.basictango_button.RestartActivity
+ADDED from AndroidManifest.xml:43:9
+	android:label
+		ADDED from AndroidManifest.xml:45:13
+	android:name
+		ADDED from AndroidManifest.xml:44:13

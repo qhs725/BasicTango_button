@@ -62,8 +62,8 @@ import java.util.UUID;
  * data to the LogCat. Also demonstrates Tango lifecycle management through
  * {@link TangoConfig}.
  */
-public class MainActivity extends Activity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class RestartActivity extends Activity {
+    private static final String TAG = RestartActivity.class.getSimpleName();
     private static final String sTranslationFormat = " %f, %f, %f";
     private static final String sRotationFormat = " %f, %f, %f, %f";
 
@@ -86,7 +86,8 @@ public class MainActivity extends Activity {
 
     public void togglestate(View view){
 
-    isOn = ((ToggleButton) view).isChecked();
+    ((ToggleButton) view).setChecked(true);
+        isOn = ((ToggleButton) view).isChecked();
 
         // Gets an instance of the NotificationManager service
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -150,6 +151,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
 
+        ToggleButton mToggle = (ToggleButton)findViewById(R.id.toggle);
+        mToggle.setChecked(true);
+        isOn = true;
         mTranslationTextView = (TextView) findViewById(R.id.translation_text_view);
         mRotationTextView = (TextView) findViewById(R.id.rotation_text_view);
         mUuid = (TextView) findViewById(R.id.uuid_text_view);
@@ -182,6 +186,8 @@ public class MainActivity extends Activity {
                     Tango.getRequestPermissionIntent(Tango.PERMISSIONTYPE_MOTION_TRACKING),
                     Tango.TANGO_INTENT_ACTIVITYCODE);
         }
+
+
 
         // Clear all notification
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -296,6 +302,7 @@ public class MainActivity extends Activity {
                 // Output to LogCat for testing purposes
                // String logMsg = translationMsg + " | " + rotationMsg + " | " + pose.timestamp;
                // Log.i(TAG, logMsg);
+                Log.i(TAG, "HELLOOOOOOO");
 
                 //If button returns true
                 if(isOn) {
