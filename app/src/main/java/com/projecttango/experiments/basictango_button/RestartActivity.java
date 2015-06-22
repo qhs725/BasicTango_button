@@ -76,17 +76,18 @@ public class RestartActivity extends Activity {
     private TangoConfig mConfig;
     private boolean mIsTangoServiceConnected;
     private boolean mIsProcessing = false;
-    private boolean isOn = false;
+    private boolean isOn = true;
     private UUID uuid;
     private double timestamp;
-
+    private int t = 0;
+    private ToggleButton btn;
 
 
 
 
     public void togglestate(View view){
 
-    ((ToggleButton) view).setChecked(true);
+
         isOn = ((ToggleButton) view).isChecked();
 
         // Gets an instance of the NotificationManager service
@@ -150,10 +151,12 @@ public class RestartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Starting Toast
+        Toast.makeText(getApplicationContext(),
+                "Restarting...", Toast.LENGTH_SHORT)
+                .show();
 
-        ToggleButton mToggle = (ToggleButton)findViewById(R.id.toggle);
-        mToggle.setChecked(true);
-        isOn = true;
+
         mTranslationTextView = (TextView) findViewById(R.id.translation_text_view);
         mRotationTextView = (TextView) findViewById(R.id.rotation_text_view);
         mUuid = (TextView) findViewById(R.id.uuid_text_view);
@@ -167,7 +170,16 @@ public class RestartActivity extends Activity {
         // like: mConfig.putBoolean(TangoConfig.KEY_BOOLEAN_DEPTH, true)
         mConfig = mTango.getConfig(TangoConfig.CONFIG_TYPE_CURRENT);
         mConfig.putBoolean(TangoConfig.KEY_BOOLEAN_MOTIONTRACKING, true);
+
+        String togvalue = getIntent().getStringExtra("isOn");
+        ((ToggleButton) findViewById(R.id.toggle)).setChecked(true);
+
+        //create UUID for restarted session;
+        uuid = UUID.randomUUID();
+
+
     }
+
 
 
 
@@ -186,8 +198,6 @@ public class RestartActivity extends Activity {
                     Tango.getRequestPermissionIntent(Tango.PERMISSIONTYPE_MOTION_TRACKING),
                     Tango.TANGO_INTENT_ACTIVITYCODE);
         }
-
-
 
         // Clear all notification
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -273,6 +283,8 @@ public class RestartActivity extends Activity {
 
 
     private void setTangoListeners() {
+        Toast.makeText(this, "O_O!" + isOn,
+                Toast.LENGTH_SHORT).show();
         // Select coordinate frame pairs
         ArrayList<TangoCoordinateFramePair> framePairs = new ArrayList<TangoCoordinateFramePair>();
         framePairs.add(new TangoCoordinateFramePair(
@@ -290,7 +302,7 @@ public class RestartActivity extends Activity {
                     return;
                 }
                 mIsProcessing = true;
-                
+
                 // Format Translation and Rotation data
                 final String translationMsg = String.format(sTranslationFormat,
                         pose.translation[0], pose.translation[1],
@@ -300,9 +312,8 @@ public class RestartActivity extends Activity {
                         pose.rotation[3]);
 
                 // Output to LogCat for testing purposes
-               // String logMsg = translationMsg + " | " + rotationMsg + " | " + pose.timestamp;
-               // Log.i(TAG, logMsg);
-                Log.i(TAG, "HELLOOOOOOO");
+                // String logMsg = translationMsg + " | " + rotationMsg + " | " + pose.timestamp;
+                // Log.i(TAG, logMsg);
 
                 //If button returns true
                 if(isOn) {
@@ -352,14 +363,17 @@ public class RestartActivity extends Activity {
                     public void run() {
                         Log.i(TAG, "ISON = " + isOn);
 
-                            //If Button returns True
-                            if(isOn) {
-                                mTranslationTextView.setText("Translation: " + translationMsg);
-                                mRotationTextView.setText("Rotation: " + rotationMsg);
-                                mtimestamp.setText("Timestamp: " + timestamp);
-                                mUuid.setText("UUID: " + uuid);
-                            }
-                            mIsProcessing = false;
+                        //If Button returns True
+                        if(isOn) {
+
+
+
+                            mTranslationTextView.setText("Translation: " + translationMsg);
+                            mRotationTextView.setText("Rotation: " + rotationMsg);
+                            mtimestamp.setText("Timestamp: " + timestamp);
+                            mUuid.setText("UUID: " + uuid);
+                        }
+                        mIsProcessing = false;
 
                     }
                 });
@@ -375,11 +389,11 @@ public class RestartActivity extends Activity {
                 // Ignoring TangoEvents
             }
 
-			@Override
-			public void onFrameAvailable(int arg0) {
-				// Ignoring onFrameAvailable Events
-				
-			}
+            @Override
+            public void onFrameAvailable(int arg0) {
+                // Ignoring onFrameAvailable Events
+
+            }
 
         });
     }
